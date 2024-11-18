@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import pool from '../helpers/dbHelper';
 import { sendSuccessResponse, sendInternalServerError, sendInvalidParameters, sendUnauthorisedError} from '../helpers/responseHelper';
+import { User } from '../interfaces/User';
 
 export const connectDB = async (req: Request, res: Response) => {
   try {
@@ -35,3 +36,13 @@ export const loginUser = async (req: Request, res: Response) => {
     sendInternalServerError(res, 'Unexpected error during login');
   }
 };
+
+export const createUser = async (req: Request, res:Response) => {
+  try{
+    const user : User = req.body as User;
+    console.log(user);
+    sendSuccessResponse(res, 'User data inserted', user);
+  }catch (err) {
+    sendInternalServerError(res, 'Unexpected error during user creation');
+  }
+}
