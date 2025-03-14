@@ -4,16 +4,9 @@ import { sendSuccessResponse, sendInternalServerError, sendInvalidParameters, se
 import { User } from '../interfaces/User';
 import { generateAccessToken, generateRefreshToken } from '../services/authServices';
 import { validateUserCredentials } from '../services/userServices';
+import { insertRow } from '../services/dbServices';
+import { USER_DETAILS, USER_DETAILS_COLUMNS } from '../configs/constants';
 
-export const connectDB = async (req: Request, res: Response) => {
-  try {
-    const result = await pool.query('SELECT NOW()');
-    sendSuccessResponse(res, 'Connected to database', result);
-  } catch (err) {
-    console.log('Error in connecting to the database:', err);
-    sendInternalServerError(res, 'Database connection error');
-  }
-};
 
 export const loginUser = async (req: Request, res: Response) => {
   try {
@@ -38,7 +31,7 @@ export const loginUser = async (req: Request, res: Response) => {
     }
   }
   catch (err) {
-    sendInternalServerError(res, 'Unexpected error during login');
+    sendInternalServerError(res, 'Unexpected error during login'+err);
   }
 };
 
@@ -46,8 +39,9 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const user: User = req.body as User;
     console.log(user);
+    await insertRow(USER_DETAILS, USER_DETAILS_COLUMNS, [user.name, user.password]);
     sendSuccessResponse(res, 'User data inserted', user);
   } catch (err) {
-    sendInternalServerError(res, 'Unexpected error during user creation');
+    sendInternalServerError(res, 'Unexpected error during user creation' + err);
   }
 }

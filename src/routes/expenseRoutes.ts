@@ -1,9 +1,8 @@
 import express from 'express';
-import {loginUser, createUser } from '../controllers/userController';
 import { authenticateToken } from '../middlewares/authMiddleware';
+import { createExpense } from '../controllers/expenseController';
 
 const router = express.Router();
-router.get('/login', loginUser);
-router.get('/create', createUser);
+router.post('/', authenticateToken, createExpense)
 
 export default router;
