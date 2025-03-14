@@ -1,7 +1,6 @@
 import {Pool} from 'pg';
 import dotenv from 'dotenv';
-dotenv.config();  // Calling the config function to load the .env file
-console.log(process.env.POSTGRE_USERNAME);
+dotenv.config();
 const pool = new Pool(
     {
         user: process.env.POSTGRE_USERNAME,
