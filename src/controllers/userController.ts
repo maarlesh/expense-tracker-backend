@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import pool from '../helpers/dbHelper';
 import { sendSuccessResponse, sendInternalServerError, sendInvalidParameters, sendUnauthorisedError} from '../helpers/responseHelper';
 import { User } from '../interfaces/User';
+import { generateAccessToken, generateRefreshToken } from '../services/authServices';
 
 export const connectDB = async (req: Request, res: Response) => {
   try {
@@ -21,7 +22,16 @@ export const loginUser = async (req: Request, res: Response) => {
       if (result.rowCount) {
         const user = result.rows[0];
         if (user.password === password) {
-          sendSuccessResponse(res, 'User Validated', result);
+          console.log('User_id: ', user);
+          const accessToken = generateAccessToken(user.user_id);
+          const refreshToken = generateRefreshToken(user.user_id);
+      
+          var hehe = {
+            message: 'User authenticated successfully',
+            accessToken,
+            refreshToken,
+          };
+          sendSuccessResponse(res, 'User Validated', hehe);
         } else {
             sendUnauthorisedError(res, 'User not authorized');
         }
