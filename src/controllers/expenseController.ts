@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
-import pool from '../helpers/dbHelper';
 import { sendSuccessResponse, sendInternalServerError, sendInvalidParameters, sendUnauthorisedError} from '../helpers/responseHelper';
 import { Expense } from '../interfaces/Expense';
-import { insertExpense, createNewAccount, insertIncome } from '../services/expenseService';
+import { insertExpense, createNewAccount, insertIncome, getAllAccounts, getAllExpenses, getAllIncomes } from '../services/expenseService';
 import { Account } from '../interfaces/Account';
 
 export const createExpense = async (req: Request, res : Response) => {
@@ -93,5 +92,33 @@ export const createAccount = async (req: Request, res: Response) => {
     catch(e){
         console.log('Error in inserting: ', e);
         sendInternalServerError(res, 'Unexpected error:'+e);
+    }
+}
+
+export const getAccounts = async (req: Request, res: Response) => {
+    try {
+        const result = await getAllAccounts(req.body.userId);
+        return sendSuccessResponse(res, result.message ?? "", result.data);
+    } catch (e) {
+        return sendInternalServerError(res, 'Unexpected error'+e);
+    }
+}
+
+
+export const getExpenses = async (req: Request, res: Response) => {
+    try {
+        const result = await getAllExpenses(req.body.accountId);
+        return sendSuccessResponse(res, result.message ?? "", result.data);
+    } catch (e) {
+        return sendInternalServerError(res, 'Unexpected error'+e);
+    }
+}
+
+export const getIncomes = async (req: Request, res: Response) => {
+    try {
+        const result = await getAllIncomes(req.body.accountId);
+        return sendSuccessResponse(res, result.message ?? "", result.data);
+    } catch (e) {
+        return sendInternalServerError(res, 'Unexpected error'+e);
     }
 }
