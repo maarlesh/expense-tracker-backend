@@ -1,5 +1,9 @@
 export const EXPENSE_COLUMNS = [
-    "user_id", "account_id", "amount", "description", "category"
+ "account_id", "amount", "description", "category_id", "category_name"
+];
+
+export const ACCOUNT_COLUMNS = [
+    "account_name", "balance", "user_id"
 ];
 
 export const USER_DETAILS = "user_details";

@@ -1,8 +1,10 @@
 import express from 'express';
 import { authenticateToken } from '../middlewares/authMiddleware';
-import { createExpense } from '../controllers/expenseController';
+import { createAccount, createExpense, createIncome } from '../controllers/expenseController';
 
 const router = express.Router();
-router.post('/', authenticateToken, createExpense)
+router.post('/', createExpense);
+router.post('/income', createIncome);
+router.post('/account', createAccount )
 
 export default router;

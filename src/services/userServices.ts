@@ -1,4 +1,6 @@
-import { getUserByUsername } from "./dbServices";
+import { USER_DETAILS, USER_DETAILS_COLUMNS } from "../configs/constants";
+import { User } from "../interfaces/User";
+import { getUserByUsername, insertRow } from "./dbServices";
 
 export const validateUserCredentials = async (userName: string, password: string) => {
   const result = await getUserByUsername(userName);
@@ -13,3 +15,11 @@ export const validateUserCredentials = async (userName: string, password: string
 
   return { success: true, user };
 };
+
+export const createUser = async (user: User) => {
+  const result =  await insertRow(USER_DETAILS, USER_DETAILS_COLUMNS, [user.name, user.password]);
+  if(!result.rowCount){
+    return { success: false, message: 'User not inserted' };
+  }
+  return { success: true, user };
+}
