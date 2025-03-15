@@ -106,13 +106,20 @@ export const getAccounts = async (req: Request, res: Response) => {
 
 
 export const getExpenses = async (req: Request, res: Response) => {
+    const accountIds = req.body.accountId;
+    
+    if (!accountIds || !Array.isArray(accountIds) || accountIds.length === 0) {
+        return sendInvalidParameters(res, "accountIds[] missing or not an array");
+    }
+
     try {
-        const result = await getAllExpenses(req.body.accountId);
+        const result = await getAllExpenses(accountIds);
         return sendSuccessResponse(res, result.message ?? "", result.data);
     } catch (e) {
-        return sendInternalServerError(res, 'Unexpected error'+e);
+        return sendInternalServerError(res, "Unexpected error: " + e);
     }
-}
+};
+
 
 export const getIncomes = async (req: Request, res: Response) => {
     try {

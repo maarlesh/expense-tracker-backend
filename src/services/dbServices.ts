@@ -8,8 +8,11 @@ export const getUserByUsername = async (userName: string) => {
     return pool.query(`SELECT * FROM user_details WHERE name = $1`, [userName]);
 };
 
-export const getDetails = async (tableName: string, columnName: string, value: string, filter: string[] = ['*']) => {
-    return pool.query(`SELECT * FROM ${tableName} WHERE ${columnName} = $1`, [value]);
+export const getDetails = async (tableName: string, columnName: string, value: string[], filter: string[] = ['*']) => {
+    const columns = filter.map(col => `"${col}"`).join(', '); 
+    const query = `SELECT * FROM "${tableName}" WHERE "${columnName}" = ANY($1);`;
+    console.log('Query:', query);
+    return pool.query(query, [value]);
 };
 
 export const insertRow = async (tableName: string, columns: string[], values: any[]) => {

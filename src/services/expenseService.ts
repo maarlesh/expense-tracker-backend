@@ -29,7 +29,7 @@ export const createNewAccount = async (account: Account) => {
 
 export const getAllAccounts = async (userId: string) => {
     try {
-        const result = await getDetails("account", "user_id", userId);
+        const result = await getDetails("account", "user_id", [userId]);
         console.log('Result', result);
         if (result.rowCount === 0) {
             return { success: false, message: 'No accounts for the user' };
@@ -41,9 +41,9 @@ export const getAllAccounts = async (userId: string) => {
     }
 }
 
-export const getAllExpenses = async (accountId: string) => {
+export const getAllExpenses = async (accountIds: string[]) => {
     try {
-        const result = await getDetails("expense", "account_id", accountId);
+        const result = await getDetails("expense", "account_id", accountIds);
         console.log('Result', result);
         if (result.rowCount === 0) {
             return { success: false, message: 'No expenses for the account' };
@@ -55,9 +55,9 @@ export const getAllExpenses = async (accountId: string) => {
     }
 }
 
-export const getAllIncomes = async (accountId: string) => {
+export const getAllIncomes = async (accountIds: string[]) => {
     try {
-        const result = await getDetails("income", "account_id", accountId);
+        const result = await getDetails("income", "account_id", accountIds);
         console.log('Result', result);
         if (result.rowCount === 0) {
             return { success: false, message: 'No incomes for the account' };
