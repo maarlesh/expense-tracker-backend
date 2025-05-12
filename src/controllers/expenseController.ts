@@ -1,15 +1,16 @@
 import { Request, Response } from 'express';
-import { sendSuccessResponse, sendInternalServerError, sendInvalidParameters, sendUnauthorisedError} from '../helpers/responseHelper';
+import { sendSuccessResponse, sendInternalServerError, sendInvalidParameters, sendUnauthorisedError } from '../helpers/responseHelper';
 import { Expense } from '../interfaces/Expense';
-import { insertExpense, createNewAccount, insertIncome, getAllAccounts, getAllExpenses, getAllIncomes } from '../services/expenseService';
+import { insertExpense, createNewAccount, insertIncome, getAllAccounts, getAllExpenses, getAllIncomes, insertCategory, getAllCategories } from '../services/expenseService';
 import { Account } from '../interfaces/Account';
+import { Category } from '../interfaces/Category';
 
-export const createExpense = async (req: Request, res : Response) => {
+export const createExpense = async (req: Request, res: Response) => {
     console.log(req.body);
 
-    try{
-        const {accountId, amount, description, categoryId, categoryName } = req.body;
-        if ( !accountId || !amount || !categoryId || !categoryName) {
+    try {
+        const { accountId, amount, description, categoryId, categoryName } = req.body;
+        if (!accountId || !amount || !categoryId || !categoryName) {
             return sendInvalidParameters(res, 'Missing required fields');
         }
 
@@ -17,8 +18,8 @@ export const createExpense = async (req: Request, res : Response) => {
             return sendInvalidParameters(res, 'Amount must be a positive number');
         }
 
-        const expense : Expense = {
-            accountId : accountId,
+        const expense: Expense = {
+            accountId: accountId,
             amount,
             description: description || '',
             categoryId,
@@ -29,19 +30,19 @@ export const createExpense = async (req: Request, res : Response) => {
         insertExpense(expense);
         return sendSuccessResponse(res, 'Expense created successfully', expense);
     }
-    catch(e){
+    catch (e) {
         console.log('Error in inserting: ', e);
-        sendInternalServerError(res, 'Unexpected error:'+e);
+        sendInternalServerError(res, 'Unexpected error:' + e);
     }
 }
 
 
-export const createIncome = async (req: Request, res : Response) => {
+export const createIncome = async (req: Request, res: Response) => {
     console.log(req.body);
 
-    try{
-        const {accountId, amount, description, categoryId, categoryName } = req.body;
-        if ( !accountId || !amount || !categoryId || !categoryName) {
+    try {
+        const { accountId, amount, description, categoryId, categoryName } = req.body;
+        if (!accountId || !amount || !categoryId || !categoryName) {
             return sendInvalidParameters(res, 'Missing required fields');
         }
 
@@ -49,8 +50,8 @@ export const createIncome = async (req: Request, res : Response) => {
             return sendInvalidParameters(res, 'Amount must be a positive number');
         }
 
-        const expense : Expense = {
-            accountId : accountId,
+        const expense: Expense = {
+            accountId: accountId,
             amount,
             description: description || '',
             categoryId,
@@ -61,15 +62,15 @@ export const createIncome = async (req: Request, res : Response) => {
         insertIncome(expense);
         return sendSuccessResponse(res, 'Income created successfully', expense);
     }
-    catch(e){
+    catch (e) {
         console.log('Error in inserting: ', e);
-        sendInternalServerError(res, 'Unexpected error:'+e);
+        sendInternalServerError(res, 'Unexpected error:' + e);
     }
 }
 
 export const createAccount = async (req: Request, res: Response) => {
     const { accountName, balance, userId } = req.body;
-    try{
+    try {
         if (!accountName || !balance || !userId) {
             return sendInvalidParameters(res, 'Missing required fields');
         }
@@ -78,10 +79,10 @@ export const createAccount = async (req: Request, res: Response) => {
             return sendInvalidParameters(res, 'Amount must be a positive number');
         }
 
-        const account : Account = {
-            accountName : accountName,
-            userId : userId,
-            balance : balance
+        const account: Account = {
+            accountName: accountName,
+            userId: userId,
+            balance: balance
         };
 
         console.log('Account: ', account);
@@ -89,9 +90,9 @@ export const createAccount = async (req: Request, res: Response) => {
         return sendSuccessResponse(res, 'Expense created successfully', account);
 
     }
-    catch(e){
+    catch (e) {
         console.log('Error in inserting: ', e);
-        sendInternalServerError(res, 'Unexpected error:'+e);
+        sendInternalServerError(res, 'Unexpected error:' + e);
     }
 }
 
@@ -100,14 +101,15 @@ export const getAccounts = async (req: Request, res: Response) => {
         const result = await getAllAccounts(req.body.userId);
         return sendSuccessResponse(res, result.message ?? "", result.data);
     } catch (e) {
-        return sendInternalServerError(res, 'Unexpected error'+e);
+        return sendInternalServerError(res, 'Unexpected error' + e);
     }
 }
 
 
 export const getExpenses = async (req: Request, res: Response) => {
+    console.log('Entere here');
     const accountIds = req.body.accountId;
-    
+
     if (!accountIds || !Array.isArray(accountIds) || accountIds.length === 0) {
         return sendInvalidParameters(res, "accountIds[] missing or not an array");
     }
@@ -126,6 +128,34 @@ export const getIncomes = async (req: Request, res: Response) => {
         const result = await getAllIncomes(req.body.accountId);
         return sendSuccessResponse(res, result.message ?? "", result.data);
     } catch (e) {
-        return sendInternalServerError(res, 'Unexpected error'+e);
+        return sendInternalServerError(res, 'Unexpected error' + e);
+    }
+}
+
+export const createCategory = async (req: Request, res: Response) => {
+    try {
+        const { categoryName, icon, userId } = req.body;
+        const category: Category = {
+            categoryName: categoryName,
+            icon: icon,
+            userId: userId
+        }
+        if (!categoryName || !icon || !userId) {
+            return sendInvalidParameters(res, "Missing arguements");
+        } else {
+            const result = await insertCategory(category);
+            return sendSuccessResponse(res, result.message ?? "", result.data);
+        }
+    } catch (e) {
+        return sendInternalServerError(res, 'Unexpected error' + e);
+    }
+}
+
+export const getCategories = async (req: Request, res: Response) => {
+    try{
+        const result = await getAllCategories(req.body.userId);
+        return sendSuccessResponse(res, result.message ?? "", result.data);
+    } catch (e) {
+        return sendInternalServerError(res, 'Unexpected error' + e);
     }
 }

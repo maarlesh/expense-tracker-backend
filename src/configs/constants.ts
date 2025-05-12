@@ -6,6 +6,10 @@ export const ACCOUNT_COLUMNS = [
     "account_name", "balance", "user_id"
 ];
 
+export const CATEGORY_COLUMNS = [
+    "name", "icon", "user_id"
+];
+
 export const USER_DETAILS = "user_details";
 
 export const USER_DETAILS_COLUMNS = ["name", "password"];
