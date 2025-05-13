@@ -1,6 +1,6 @@
 import { Response } from 'express';
 export const sendSuccessResponse = ( res: Response, message: string, data : any = null) => {
-    res.status(200).json({ message, data });
+    res.status(200).json(data);
 }
 export const sendInvalidParameters = ( res: Response, message: string, data : any = null) => {
     res.status(400).json({ message, data });

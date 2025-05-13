@@ -98,8 +98,11 @@ export const createAccount = async (req: Request, res: Response) => {
 
 export const getAccounts = async (req: Request, res: Response) => {
     try {
-        const result = await getAllAccounts(req.body.userId);
-        return sendSuccessResponse(res, result.message ?? "", result.data);
+        const userId = req.query.userId;
+        if (typeof userId == 'string') {
+            const result = await getAllAccounts(userId);
+            return sendSuccessResponse(res, result.message ?? "", result.data);
+        }
     } catch (e) {
         return sendInternalServerError(res, 'Unexpected error' + e);
     }
@@ -107,15 +110,34 @@ export const getAccounts = async (req: Request, res: Response) => {
 
 
 export const getExpenses = async (req: Request, res: Response) => {
-    console.log('Entere here');
-    const accountIds = req.body.accountId;
+    let accountIds = req.query.accountId;
 
-    if (!accountIds || !Array.isArray(accountIds) || accountIds.length === 0) {
-        return sendInvalidParameters(res, "accountIds[] missing or not an array");
+    if (typeof accountIds === 'string') {
+        try {
+            const parsed = JSON.parse(accountIds);
+            if (Array.isArray(parsed)) {
+                accountIds = parsed.map((id) => id.toString());
+            } else {
+                accountIds = [accountIds];
+            }
+        } catch {
+            if (typeof accountIds === 'string') {
+                accountIds = accountIds.split(',');
+            }
+        }
+    } else if (!Array.isArray(accountIds)) {
+        return sendInvalidParameters(res, "accountId must be a string or an array of strings");
+    }
+    const accountIdsArray = accountIds.map((id) => parseInt(id as string, 10)).filter((id) => !isNaN(id));
+
+    if (accountIdsArray.length === 0) {
+        return sendInvalidParameters(res, "accountIds[] must contain valid numbers");
     }
 
+    console.log("Account Ids array:", accountIdsArray);
+
     try {
-        const result = await getAllExpenses(accountIds);
+        const result = await getAllExpenses(accountIdsArray);
         return sendSuccessResponse(res, result.message ?? "", result.data);
     } catch (e) {
         return sendInternalServerError(res, "Unexpected error: " + e);
@@ -152,7 +174,7 @@ export const createCategory = async (req: Request, res: Response) => {
 }
 
 export const getCategories = async (req: Request, res: Response) => {
-    try{
+    try {
         const result = await getAllCategories(req.body.userId);
         return sendSuccessResponse(res, result.message ?? "", result.data);
     } catch (e) {

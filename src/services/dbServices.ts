@@ -11,7 +11,15 @@ export const getUserByUsername = async (userName: string) => {
 export const getDetails = async (tableName: string, columnName: string, value: string[], filter: string[] = ['*']) => {
     const columns = filter.map(col => `"${col}"`).join(', '); 
     const query = `SELECT * FROM "${tableName}" WHERE "${columnName}" = ANY($1);`;
-    console.log('Query:', query);
+    console.log('Query:  ', query);
+    return pool.query(query, [value]);
+};
+
+
+export const getDetailsNumber = async (tableName: string, columnName: string, value: number[], filter: string[] = ['*']) => {
+    const columns = filter.map(col => `"${col}"`).join(', '); 
+    const query = `SELECT * FROM "${tableName}" WHERE "${columnName}" = ANY($1);`;
+    console.log('Query:  ', query);
     return pool.query(query, [value]);
 };
 

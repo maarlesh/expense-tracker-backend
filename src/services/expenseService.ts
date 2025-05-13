@@ -2,7 +2,7 @@ import { ACCOUNT_COLUMNS, CATEGORY_COLUMNS, EXPENSE_COLUMNS } from "../configs/c
 import { Account } from "../interfaces/Account";
 import { Category } from "../interfaces/Category";
 import { Expense } from "../interfaces/Expense";
-import { getDetails, insertRow } from "./dbServices";
+import { getDetails, getDetailsNumber, insertRow } from "./dbServices";
 
 export const insertExpense = async (expense: Expense) => {
     const result = await insertRow("expense", EXPENSE_COLUMNS, [expense.accountId, expense.amount, expense.description, expense.categoryId, expense.categoryName]);
@@ -42,9 +42,9 @@ export const getAllAccounts = async (userId: string) => {
     }
 }
 
-export const getAllExpenses = async (accountIds: string[]) => {
+export const getAllExpenses = async (accountIds: number[]) => {
     try {
-        const result = await getDetails("expense", "account_id", accountIds);
+        const result = await getDetailsNumber("expense", "account_id", accountIds);
         console.log('Result', result);
         if (result.rowCount === 0) {
             return { success: false, message: 'No expenses for the account' };
