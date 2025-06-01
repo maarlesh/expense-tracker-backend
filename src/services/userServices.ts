@@ -4,6 +4,7 @@ import { getUserByUsername, insertRow } from "./dbServices";
 
 export const validateUserCredentials = async (userName: string, password: string) => {
   const result = await getUserByUsername(userName);
+  console.log('Result: ' , result);
   if (!result.rowCount) {
     return { success: false, message: 'User not found' };
   }
