@@ -12,4 +12,4 @@ export const CATEGORY_COLUMNS = [
 
 export const USER_DETAILS = "user_details";
 
-export const USER_DETAILS_COLUMNS = ["name", "password"];
+export const USER_DETAILS_COLUMNS = ["name", "password", "email" , "phone_number"];

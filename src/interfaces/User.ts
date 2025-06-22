@@ -1,5 +1,5 @@
 export interface User{
-    oid : Float32Array,
+    userId : number,
     name : string,
     password : string,
     email? : string,

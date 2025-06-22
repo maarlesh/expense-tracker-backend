@@ -19,7 +19,7 @@ export const loginUser = async (req: Request, res: Response) => {
         sendSuccessResponse(res, 'User Validated', {
           message: 'User authenticated successfully',
           name: user.name,
-          user_id: user.user_id
+          userId: user.user_id
         });
       } else {
         sendUnauthorisedError(res, 'User not authorized');
@@ -35,12 +35,35 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const createNewUser = async (req: Request, res: Response) => {
   try {
-    const user: User = req.body as User;
-    var result = createUser(user);
-    if((await result).success){
-      sendSuccessResponse(res, 'User data inserted', user);
+    const userId = parseFloat(req.params.userId);
+
+    const name = req.query.name as string;
+    const password = req.query.password as string;
+    const email = req.query.email as string | undefined;
+    const phoneNumber = req.query.phoneNumber as string | undefined;
+
+    // Validate required fields
+    if (!name || name.trim() === '' || !password || password.trim() === '') {
+      return sendInvalidParameters(res, 'Name and password fields are required and cannot be empty', []);
+    }
+
+    const user: User = {
+      userId: userId,
+      name: name.trim(),
+      password: password.trim(),
+      email,
+      phoneNumber,
+    };
+
+    const result = await createUser(user);
+    
+    console.debug('Result:', result);
+    if (result.success) {
+      sendSuccessResponse(res, 'User data inserted', result.user);
+    } else {
+      sendInternalServerError(res, 'User creation failed', result || 'Unknown error');
     }
   } catch (err) {
-    sendInternalServerError(res, 'Unexpected error during user creation' + err);
+    sendInternalServerError(res, 'Unexpected error during user creation: ' + err);
   }
-}
+};
